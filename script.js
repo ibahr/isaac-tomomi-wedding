@@ -23,39 +23,59 @@ const guestData = {
 function loadGuestInfo() {
     const guestCode = document.getElementById('guest').value.toLowerCase();
 
-    if (guestData[guestCode]) {
-        const guestInfo = guestData[guestCode];
-        document.getElementById('guest-name').textContent = guestInfo.name;
-        document.getElementById('custom-message').textContent = guestInfo.message;
-        document.getElementById('rsvp-section').style.display = 'block';
+    db.collection("guests").doc(guestCode).get().then((doc) => {
+        if (doc.exists) {
+            const guestInfo = doc.data();
+            document.getElementById('guest-name').textContent = guestInfo.name;
+            document.getElementById('custom-message').textContent = guestInfo.message;
+            document.getElementById('rsvp-section').style.display = 'block';
 
-        // If guest is part of a group, display individual RSVPs
-        if (guestInfo.guestNames) {
-            const guestList = guestInfo.guestNames.map((name, index) => `
-                <div class="individual-rsvp">
-                    <h4>${name}</h4>
-                    <label>
+            // Clear previous guest list
+            const guestListContainer = document.getElementById('guest-list');
+            guestListContainer.innerHTML = ''; // Clear the list first
+
+            // Display individual RSVPs for group members
+            if (guestInfo.guestNames) {
+                guestInfo.guestNames.forEach((name, index) => {
+                    const individualRsvpDiv = document.createElement('div');
+                    individualRsvpDiv.classList.add('individual-rsvp');
+
+                    const nameHeader = document.createElement('h4');
+                    nameHeader.textContent = name;
+                    individualRsvpDiv.appendChild(nameHeader);
+
+                    const yesLabel = document.createElement('label');
+                    yesLabel.innerHTML = `
                         <input type="radio" name="attending_${index}" value="yes" required> Yes<br><span class="jp-text">はい</span>
-                    </label>
-                    <label>
-                        <input type="radio" name="attending_${index}" value="no" required> No<br><span class="jp-text">いいえ</span>
-                    </label>
-                </div>
-            `).join("");
-            document.getElementById('guest-list').innerHTML = guestList;
-            document.getElementById('guest-list-section').style.display = 'block';
-        }
+                    `;
+                    individualRsvpDiv.appendChild(yesLabel);
 
-        // Check if the guest can bring a plus one
-        if (guestInfo.canBringPlusOne) {
-            document.getElementById('plus-one-section').style.display = 'block';
+                    const noLabel = document.createElement('label');
+                    noLabel.innerHTML = `
+                        <input type="radio" name="attending_${index}" value="no" required> No<br><span class="jp-text">いいえ</span>
+                    `;
+                    individualRsvpDiv.appendChild(noLabel);
+
+                    guestListContainer.appendChild(individualRsvpDiv);
+                });
+
+                document.getElementById('guest-list-section').style.display = 'block';
+            }
+
+            // Show plus one option if applicable
+            if (guestInfo.canBringPlusOne) {
+                document.getElementById('plus-one-section').style.display = 'block';
+            } else {
+                document.getElementById('plus-one-section').style.display = 'none';
+            }
         } else {
-            document.getElementById('plus-one-section').style.display = 'none';
+            alert('Guest not found. Please enter the correct code.');
         }
-    } else {
-        alert('Guest not found. Please enter the correct code.');
-    }
+    }).catch((error) => {
+        console.error("Error getting document:", error);
+    });
 }
+
 
 // Capture and submit group RSVP responses
 document.getElementById('rsvp-form').addEventListener('submit', function(event) {
