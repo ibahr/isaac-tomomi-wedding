@@ -38,23 +38,44 @@ function loadGuestInfo() {
         guestInfo.guestNames.forEach((name, index) => {
             const individualRsvpDiv = document.createElement('div');
             individualRsvpDiv.classList.add('individual-rsvp');
-
+        
             const nameHeader = document.createElement('h4');
             nameHeader.textContent = name;
             individualRsvpDiv.appendChild(nameHeader);
-
+        
+            // Create the 'Yes' radio button and label
             const yesLabel = document.createElement('label');
-            yesLabel.innerHTML = `
-                <input type="radio" name="attending_${index}" value="yes" required> Yes<br><span class="jp-text">はい</span>
-            `;
+            const yesRadio = document.createElement('input');
+            yesRadio.setAttribute('type', 'radio');
+            yesRadio.setAttribute('name', `attending_${index}`);
+            yesRadio.setAttribute('value', 'yes');
+            yesRadio.required = true;  // Ensure the radio is required
+            yesLabel.appendChild(yesRadio);  // Append the radio to the label
+            yesLabel.appendChild(document.createTextNode(' Yes'));  // Add the text 'Yes'
+            const yesSpan = document.createElement('span');
+            yesSpan.classList.add('jp-text');
+            yesSpan.textContent = 'はい';  // Add the Japanese equivalent
+            yesLabel.appendChild(yesSpan);
+        
             individualRsvpDiv.appendChild(yesLabel);
-
+        
+            // Create the 'No' radio button and label
             const noLabel = document.createElement('label');
-            noLabel.innerHTML = `
-                <input type="radio" name="attending_${index}" value="no" required> No<br><span class="jp-text">いいえ</span>
-            `;
+            const noRadio = document.createElement('input');
+            noRadio.setAttribute('type', 'radio');
+            noRadio.setAttribute('name', `attending_${index}`);
+            noRadio.setAttribute('value', 'no');
+            noRadio.required = true;  // Ensure the radio is required
+            noLabel.appendChild(noRadio);  // Append the radio to the label
+            noLabel.appendChild(document.createTextNode(' No'));  // Add the text 'No'
+            const noSpan = document.createElement('span');
+            noSpan.classList.add('jp-text');
+            noSpan.textContent = 'いいえ';  // Add the Japanese equivalent
+            noLabel.appendChild(noSpan);
+        
             individualRsvpDiv.appendChild(noLabel);
-
+        
+            // Append the whole div for this guest to the guest list container
             guestListContainer.appendChild(individualRsvpDiv);
         });
 
