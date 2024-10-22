@@ -1,4 +1,4 @@
-// Guest database with group options and plus one settings
+// Guest database with individual group members and plus one settings
 const guestData = {
     "group1": { 
         name: "The Smith Family", 
@@ -29,22 +29,55 @@ function loadGuestInfo() {
         document.getElementById('custom-message').textContent = guestInfo.message;
         document.getElementById('rsvp-section').style.display = 'block';
 
+        // If guest is part of a group, display individual RSVPs
+        if (guestInfo.guestNames) {
+            const guestList = guestInfo.guestNames.map((name, index) => `
+                <div class="individual-rsvp">
+                    <h4>${name}</h4>
+                    <label>
+                        <input type="radio" name="attending_${index}" value="yes" required> Yes<br><span class="jp-text">はい</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="attending_${index}" value="no" required> No<br><span class="jp-text">いいえ</span>
+                    </label>
+                </div>
+            `).join("");
+            document.getElementById('guest-list').innerHTML = guestList;
+            document.getElementById('guest-list-section').style.display = 'block';
+        }
+
         // Check if the guest can bring a plus one
         if (guestInfo.canBringPlusOne) {
             document.getElementById('plus-one-section').style.display = 'block';
         } else {
             document.getElementById('plus-one-section').style.display = 'none';
         }
-
-        // Display named guests if applicable
-        if (guestInfo.guestNames) {
-            const guestList = guestInfo.guestNames.map(name => `<li>${name}</li>`).join("");
-            document.getElementById('guest-list').innerHTML = guestList;
-            document.getElementById('guest-list-section').style.display = 'block';
-        } else {
-            document.getElementById('guest-list-section').style.display = 'none';
-        }
     } else {
         alert('Guest not found. Please enter the correct code.');
     }
 }
+
+// Capture and submit group RSVP responses
+document.getElementById('rsvp-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const guestCode = document.getElementById('guest').value.toLowerCase();
+    const guestInfo = guestData[guestCode];
+    const responses = {};
+
+    if (guestInfo.guestNames) {
+        guestInfo.guestNames.forEach((name, index) => {
+            const response = document.querySelector(`input[name="attending_${index}"]:checked`).value;
+            responses[name] = response;
+        });
+    }
+
+    // Plus one response
+    if (guestInfo.canBringPlusOne) {
+        const plusOneResponse = document.querySelector('input[name="plusone"]:checked').value;
+        responses["Plus One"] = plusOneResponse === "yes" ? document.getElementById('plus-one-name').value : "No Plus One";
+    }
+
+    console.log(responses); // Here, you can handle the responses (send to server, email, etc.)
+    alert('RSVP Submitted!');
+});
