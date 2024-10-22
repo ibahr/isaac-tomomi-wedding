@@ -6,11 +6,12 @@ body {
     color: #333;
 }
 
+/* Japanese Text */
 .jp-text {
     font-family: 'Noto Sans JP', sans-serif;
     font-weight: 400;
-    font-size: 0.9em;
-    color: #555;
+    font-size: 1rem; /* Increase the font size slightly for better readability */
+    color: #222; /* Darken the color for better readability */
     display: block;
     margin-top: 5px;
 }
@@ -42,12 +43,15 @@ body {
 .hero h1 {
     font-size: 4rem;
     color: #f8f8f8;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
+/* Date Section - Make the date more prominent */
 .hero p {
-    font-size: 1.5rem;
-    color: #d9d9d9;
+    font-size: 2rem; /* Increase the size of the date */
+    font-weight: bold; /* Make the date bold */
+    color: #b93f52; /* Use a more prominent color (blush pink, or try burgundy/navy) */
+    margin-bottom: 10px;
 }
 
 /* About Section */
