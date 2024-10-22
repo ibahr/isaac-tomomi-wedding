@@ -23,57 +23,50 @@ const guestData = {
 function loadGuestInfo() {
     const guestCode = document.getElementById('guest').value.toLowerCase();
 
-    db.collection("guests").doc(guestCode).get().then((doc) => {
-        if (doc.exists) {
-            const guestInfo = doc.data();
-            document.getElementById('guest-name').textContent = guestInfo.name;
-            document.getElementById('custom-message').textContent = guestInfo.message;
-            document.getElementById('rsvp-section').style.display = 'block';
 
-            // Clear previous guest list
-            const guestListContainer = document.getElementById('guest-list');
-            guestListContainer.innerHTML = ''; // Clear the list first
+    const guestInfo = guestData[guestCode];
+    document.getElementById('guest-name').textContent = guestInfo.name;
+    document.getElementById('custom-message').textContent = guestInfo.message;
+    document.getElementById('rsvp-section').style.display = 'block';
 
-            // Display individual RSVPs for group members
-            if (guestInfo.guestNames) {
-                guestInfo.guestNames.forEach((name, index) => {
-                    const individualRsvpDiv = document.createElement('div');
-                    individualRsvpDiv.classList.add('individual-rsvp');
+    // Clear previous guest list
+    const guestListContainer = document.getElementById('guest-list');
+    guestListContainer.innerHTML = ''; // Clear the list first
 
-                    const nameHeader = document.createElement('h4');
-                    nameHeader.textContent = name;
-                    individualRsvpDiv.appendChild(nameHeader);
+    // Display individual RSVPs for group members
+    if (guestInfo.guestNames) {
+        guestInfo.guestNames.forEach((name, index) => {
+            const individualRsvpDiv = document.createElement('div');
+            individualRsvpDiv.classList.add('individual-rsvp');
 
-                    const yesLabel = document.createElement('label');
-                    yesLabel.innerHTML = `
-                        <input type="radio" name="attending_${index}" value="yes" required> Yes<br><span class="jp-text">はい</span>
-                    `;
-                    individualRsvpDiv.appendChild(yesLabel);
+            const nameHeader = document.createElement('h4');
+            nameHeader.textContent = name;
+            individualRsvpDiv.appendChild(nameHeader);
 
-                    const noLabel = document.createElement('label');
-                    noLabel.innerHTML = `
-                        <input type="radio" name="attending_${index}" value="no" required> No<br><span class="jp-text">いいえ</span>
-                    `;
-                    individualRsvpDiv.appendChild(noLabel);
+            const yesLabel = document.createElement('label');
+            yesLabel.innerHTML = `
+                <input type="radio" name="attending_${index}" value="yes" required> Yes<br><span class="jp-text">はい</span>
+            `;
+            individualRsvpDiv.appendChild(yesLabel);
 
-                    guestListContainer.appendChild(individualRsvpDiv);
-                });
+            const noLabel = document.createElement('label');
+            noLabel.innerHTML = `
+                <input type="radio" name="attending_${index}" value="no" required> No<br><span class="jp-text">いいえ</span>
+            `;
+            individualRsvpDiv.appendChild(noLabel);
 
-                document.getElementById('guest-list-section').style.display = 'block';
-            }
+            guestListContainer.appendChild(individualRsvpDiv);
+        });
 
-            // Show plus one option if applicable
-            if (guestInfo.canBringPlusOne) {
-                document.getElementById('plus-one-section').style.display = 'block';
-            } else {
-                document.getElementById('plus-one-section').style.display = 'none';
-            }
-        } else {
-            alert('Guest not found. Please enter the correct code.');
-        }
-    }).catch((error) => {
-        console.error("Error getting document:", error);
-    });
+        document.getElementById('guest-list-section').style.display = 'block';
+    }
+
+    // Show plus one option if applicable
+    if (guestInfo.canBringPlusOne) {
+        document.getElementById('plus-one-section').style.display = 'block';
+    } else {
+        document.getElementById('plus-one-section').style.display = 'none';
+    }
 }
 
 
