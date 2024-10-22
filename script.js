@@ -34,7 +34,7 @@ function loadGuestInfo() {
     guestListContainer.innerHTML = ''; // Clear the list first
 
     // Display individual RSVPs for group members
-    if (guestInfo.guestNames) {
+    //if (guestInfo.guestNames) {
         guestInfo.guestNames.forEach((name, index) => {
             const individualRsvpDiv = document.createElement('div');
             individualRsvpDiv.classList.add('individual-rsvp');
@@ -80,7 +80,7 @@ function loadGuestInfo() {
         });
 
         document.getElementById('guest-list-section').style.display = 'block';
-    }
+    //}
 
     // Show plus one option if applicable
     if (guestInfo.canBringPlusOne) {
