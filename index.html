@@ -38,9 +38,19 @@
 
     <section class="guest-rsvp">
         <h2>RSVP for <span id="guest-name">Guest</span><br><span class="jp-text">[ゲスト]のためのRSVP</span></h2>
+        <p id="custom-message"></p> <!-- Custom message for each guest or group -->
+    
         <form id="rsvp-form">
             <input type="text" id="guest" placeholder="Enter your unique code" required>
             <button type="button" class="btn" onclick="loadGuestInfo()">Load Guest Info<br><span class="jp-text">ゲスト情報を読み込む</span></button>
+    
+            <!-- Named Guest List Section -->
+            <div id="guest-list-section" style="display:none;">
+                <h3>Guests in your group:</h3>
+                <ul id="guest-list"></ul>
+            </div>
+    
+            <!-- RSVP Confirmation -->
             <div id="rsvp-section" style="display:none;">
                 <h3>Will you be attending?<br><span class="jp-text">出席されますか？</span></h3>
                 <label>
@@ -49,7 +59,8 @@
                 <label>
                     <input type="radio" name="attending" value="no" required> No<br><span class="jp-text">いいえ</span>
                 </label>
-
+    
+                <!-- Plus One Section -->
                 <div id="plus-one-section" style="display:none;">
                     <h3>Will you bring a plus one?<br><span class="jp-text">同伴者をお連れになりますか？</span></h3>
                     <label>
@@ -58,8 +69,13 @@
                     <label>
                         <input type="radio" name="plusone" value="no"> No<br><span class="jp-text">いいえ</span>
                     </label>
+    
+                    <div id="plus-one-name-section" style="display:none;">
+                        <input type="text" id="plus-one-name" placeholder="Enter the name of your plus one"><br>
+                        <span class="jp-text">同伴者の名前を入力してください</span>
+                    </div>
                 </div>
-
+    
                 <button type="submit" class="btn">Submit RSVP<br><span class="jp-text">RSVPを送信</span></button>
             </div>
         </form>

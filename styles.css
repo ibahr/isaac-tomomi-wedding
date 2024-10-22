@@ -135,3 +135,27 @@ footer {
     padding: 20px 0;
     font-size: 1rem;
 }
+
+#guest-list-section {
+    margin-top: 20px;
+}
+
+#guest-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#guest-list li {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+#plus-one-name-section {
+    margin-top: 10px;
+}
+
+#custom-message {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 20px;
+}
