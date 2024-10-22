@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding of Isaac & Tomomi</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="hero">
+        <div class="overlay"></div>
+        <div class="hero-text">
+            <h1>The Wedding of Isaac & Tomomi<br><span class="jp-text">アイザックとともみの結婚式</span></h1>
+            <p>April 12, 2025<br><span class="jp-text">2025年4月12日</span></p>
+        </div>
+    </header>
+
+    <section class="about">
+        <h2>About Us<br><span class="jp-text">私たちについて</span></h2>
+        <p>We can't wait to celebrate our special day with you! Join us for an unforgettable event at Atsuta Jingu and Hilton Nagoya.<br><span class="jp-text">私たちはこの特別な日を皆さんと一緒に祝えるのを楽しみにしています！熱田神宮とヒルトン名古屋での忘れられないイベントに参加してください。</span></p>
+    </section>
+
+    <section class="details">
+        <h2>Wedding Details<br><span class="jp-text">結婚式の詳細</span></h2>
+        <div class="details-content">
+            <div class="detail">
+                <h3>Ceremony<br><span class="jp-text">結婚式</span></h3>
+                <p>Atsuta Jingu, Nagoya<br><span class="jp-text">熱田神宮、名古屋</span></p>
+            </div>
+            <div class="detail">
+                <h3>Reception<br><span class="jp-text">披露宴</span></h3>
+                <p>Hilton Nagoya, 105 Ballroom<br><span class="jp-text">ヒルトン名古屋、105 ボールルーム</span></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="guest-rsvp">
+        <h2>RSVP for <span id="guest-name">Guest</span><br><span class="jp-text">[ゲスト]のためのRSVP</span></h2>
+        <form id="rsvp-form">
+            <input type="text" id="guest" placeholder="Enter your unique code" required>
+            <button type="button" class="btn" onclick="loadGuestInfo()">Load Guest Info<br><span class="jp-text">ゲスト情報を読み込む</span></button>
+            <div id="rsvp-section" style="display:none;">
+                <h3>Will you be attending?<br><span class="jp-text">出席されますか？</span></h3>
+                <label>
+                    <input type="radio" name="attending" value="yes" required> Yes<br><span class="jp-text">はい</span>
+                </label>
+                <label>
+                    <input type="radio" name="attending" value="no" required> No<br><span class="jp-text">いいえ</span>
+                </label>
+
+                <div id="plus-one-section" style="display:none;">
+                    <h3>Will you bring a plus one?<br><span class="jp-text">同伴者をお連れになりますか？</span></h3>
+                    <label>
+                        <input type="radio" name="plusone" value="yes"> Yes<br><span class="jp-text">はい</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="plusone" value="no"> No<br><span class="jp-text">いいえ</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn">Submit RSVP<br><span class="jp-text">RSVPを送信</span></button>
+            </div>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Isaac & Tomomi - Thank you for being part of our journey!<br><span class="jp-text">アイザックとともみの結婚式に参加していただきありがとうございます！</span></p>
+    </footer>
+</body>
+</html>
