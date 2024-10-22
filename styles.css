@@ -11,7 +11,8 @@ body {
     font-family: 'Noto Sans JP', sans-serif;
     font-weight: 400;
     font-size: 1rem; /* Increase the font size slightly for better readability */
-    color: #222; /* Darken the color for better readability */
+    color: #fff; /* Change to white for contrast */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Add shadow to make it stand out */
     display: block;
     margin-top: 5px;
 }
@@ -51,6 +52,7 @@ body {
     font-size: 2rem; /* Increase the size of the date */
     font-weight: bold; /* Make the date bold */
     color: #b93f52; /* Use a more prominent color (blush pink, or try burgundy/navy) */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Add shadow to improve visibility */
     margin-bottom: 10px;
 }
 
