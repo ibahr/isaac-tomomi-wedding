@@ -89,13 +89,19 @@
 
         // Function to load guest info
         async function loadGuestInfo() {
+            console.log("Load Guest Info button clicked"); // Check if button is triggering the function
+            
             const guestCode = document.getElementById('guest').value.toLowerCase();
+            console.log("Guest code entered:", guestCode); // Check if guest code is being read correctly
+            
             const guestDocRef = doc(db, "guests", guestCode);
 
             try {
                 const guestDoc = await getDoc(guestDocRef);
                 if (guestDoc.exists()) {
                     const guestInfo = guestDoc.data();
+                    console.log("Guest data fetched:", guestInfo); // Check if data is fetched successfully
+
                     document.getElementById('guest-name').textContent = guestInfo.name;
                     document.getElementById('custom-message').textContent = guestInfo.message;
                     document.getElementById('rsvp-section').style.display = 'block';
@@ -144,6 +150,7 @@
                     // Show plus one section if applicable
                     document.getElementById('plus-one-section').style.display = guestInfo.canBringPlusOne ? 'block' : 'none';
                 } else {
+                    console.log('Guest document does not exist');
                     alert('Guest not found. Please enter the correct code.');
                 }
             } catch (error) {
