@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wedding of Isaac & Tomomi</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -38,37 +37,151 @@
 
     <section class="guest-rsvp">
         <h2>RSVP for <span id="guest-name">Guest</span><br><span class="jp-text">[ゲスト]のためのRSVP</span></h2>
-        <p id="custom-message"></p> <!-- Custom message for each guest or group -->
-    
+        <p id="custom-message"></p>
+
         <form id="rsvp-form">
             <input type="text" id="guest" placeholder="Enter your unique code" required>
-            <button type="button" class="btn" onclick="loadGuestInfo()">Load Guest Info<br><span class="jp-text">ゲスト情報を読み込む</span></button>
-    
+            <button type="button" onclick="loadGuestInfo()">Load Guest Info</button>
+
             <!-- Individual Guest RSVP Section -->
             <div id="guest-list-section" style="display:none;">
                 <h3>Please confirm attendance for each guest:</h3>
-                <div id="guest-list"></div> <!-- Each guest in the group will be listed here -->
+                <div id="guest-list"></div>
             </div>
-    
+
             <!-- Plus One Section -->
             <div id="plus-one-section" style="display:none;">
-                <h3>Will you bring a plus one?<br><span class="jp-text">同伴者をお連れになりますか？</span></h3>
+                <h3>Will you bring a plus one?</h3>
                 <label>
-                    <input type="radio" name="plusone" value="yes"> Yes<br><span class="jp-text">はい</span>
+                    <input type="radio" name="plusone" value="yes"> Yes
                 </label>
                 <label>
-                    <input type="radio" name="plusone" value="no"> No<br><span class="jp-text">いいえ</span>
+                    <input type="radio" name="plusone" value="no"> No
                 </label>
-    
+
                 <div id="plus-one-name-section" style="display:none;">
-                    <input type="text" id="plus-one-name" placeholder="Enter the name of your plus one"><br>
-                    <span class="jp-text">同伴者の名前を入力してください</span>
+                    <input type="text" id="plus-one-name" placeholder="Enter the name of your plus one">
                 </div>
             </div>
-    
-            <button type="submit" class="btn">Submit RSVP<br><span class="jp-text">RSVPを送信</span></button>
+
+            <button type="submit">Submit RSVP</button>
         </form>
     </section>
+
+    <script type="module">
+        // Import Firebase and Firestore functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQ3giOhEChsj8oziRaTGeITm7bT8bxfno",
+            authDomain: "wedding-2193a.firebaseapp.com",
+            projectId: "wedding-2193a",
+            storageBucket: "wedding-2193a.appspot.com",
+            messagingSenderId: "856129939537",
+            appId: "1:856129939537:web:0c7f5a0ee410197ab67070"
+        };
+
+        // Initialize Firebase and Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to load guest info
+        async function loadGuestInfo() {
+            const guestCode = document.getElementById('guest').value.toLowerCase();
+            const guestDocRef = doc(db, "guests", guestCode);
+
+            try {
+                const guestDoc = await getDoc(guestDocRef);
+                if (guestDoc.exists()) {
+                    const guestInfo = guestDoc.data();
+                    document.getElementById('guest-name').textContent = guestInfo.name;
+                    document.getElementById('custom-message').textContent = guestInfo.message;
+                    document.getElementById('rsvp-section').style.display = 'block';
+
+                    const guestListContainer = document.getElementById('guest-list');
+                    guestListContainer.innerHTML = ''; // Clear previous content
+
+                    // Display individual RSVPs for each guest in the group
+                    if (guestInfo.guestNames) {
+                        guestInfo.guestNames.forEach((name, index) => {
+                            const individualRsvpDiv = document.createElement('div');
+                            individualRsvpDiv.classList.add('individual-rsvp');
+
+                            const nameHeader = document.createElement('h4');
+                            nameHeader.textContent = name;
+                            individualRsvpDiv.appendChild(nameHeader);
+
+                            // Yes option
+                            const yesLabel = document.createElement('label');
+                            const yesRadio = document.createElement('input');
+                            yesRadio.type = 'radio';
+                            yesRadio.name = `attending_${index}`;
+                            yesRadio.value = 'yes';
+                            yesRadio.required = true;
+                            yesLabel.appendChild(yesRadio);
+                            yesLabel.appendChild(document.createTextNode(' Yes'));
+
+                            // No option
+                            const noLabel = document.createElement('label');
+                            const noRadio = document.createElement('input');
+                            noRadio.type = 'radio';
+                            noRadio.name = `attending_${index}`;
+                            noRadio.value = 'no';
+                            noRadio.required = true;
+                            noLabel.appendChild(noRadio);
+                            noLabel.appendChild(document.createTextNode(' No'));
+
+                            individualRsvpDiv.appendChild(yesLabel);
+                            individualRsvpDiv.appendChild(noLabel);
+
+                            guestListContainer.appendChild(individualRsvpDiv);
+                        });
+                        document.getElementById('guest-list-section').style.display = 'block';
+                    }
+
+                    // Show plus one section if applicable
+                    document.getElementById('plus-one-section').style.display = guestInfo.canBringPlusOne ? 'block' : 'none';
+                } else {
+                    alert('Guest not found. Please enter the correct code.');
+                }
+            } catch (error) {
+                console.error("Error retrieving guest info:", error);
+            }
+        }
+
+        // Submit RSVP responses to Firestore
+        document.getElementById('rsvp-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const guestCode = document.getElementById('guest').value.toLowerCase();
+            const guestDocRef = doc(db, "guests", guestCode);
+            const responses = {};
+
+            // Capture responses for each guest in the group
+            const guestListSection = document.getElementById('guest-list-section');
+            const guestDivs = guestListSection.querySelectorAll('.individual-rsvp');
+            guestDivs.forEach((div, index) => {
+                const response = div.querySelector(`input[name="attending_${index}"]:checked`);
+                responses[div.querySelector('h4').textContent] = response ? response.value : null;
+            });
+
+            // Capture plus one information
+            if (document.getElementById('plus-one-section').style.display === 'block') {
+                const plusOneResponse = document.querySelector('input[name="plusone"]:checked').value;
+                responses["Plus One"] = plusOneResponse === "yes" ? document.getElementById('plus-one-name').value : "No Plus One";
+            }
+
+            // Update Firestore with responses
+            try {
+                await updateDoc(guestDocRef, { rsvp: responses });
+                alert('RSVP Submitted!');
+            } catch (error) {
+                console.error("Error submitting RSVP:", error);
+            }
+        });
+    </script>
 
     <footer>
         <p>&copy; 2025 Isaac & Tomomi - Thank you for being part of our journey!<br><span class="jp-text">アイザックとともみの結婚式に参加していただきありがとうございます！</span></p>
