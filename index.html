@@ -150,7 +150,17 @@
                             individualRsvpDiv.appendChild(noLabel);
 
                             guestListContainer.appendChild(individualRsvpDiv);
+                            
+                            // Pre-fill RSVP if response exists
+                            if (guestInfo.rsvp && guestInfo.rsvp[name]) {
+                                if (guestInfo.rsvp[name] === 'yes') {
+                                    yesRadio.checked = true;
+                                } else if (guestInfo.rsvp[name] === 'no') {
+                                    noRadio.checked = true;
+                                }
+                            }
                         });
+
                         guestListSection.style.display = 'block';
                     }
 
