@@ -87,12 +87,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Function to load guest info
+        //load guest info function
         async function loadGuestInfo() {
-            console.log("Load Guest Info button clicked"); // Check if button is triggering the function
+            console.log("Load Guest Info button clicked");
             
             const guestCode = document.getElementById('guest').value.toLowerCase();
-            console.log("Guest code entered:", guestCode); // Check if guest code is being read correctly
+            console.log("Guest code entered:", guestCode);
             
             const guestDocRef = doc(db, "guests", guestCode);
 
@@ -100,17 +100,24 @@
                 const guestDoc = await getDoc(guestDocRef);
                 if (guestDoc.exists()) {
                     const guestInfo = guestDoc.data();
-                    console.log("Guest data fetched:", guestInfo); // Check if data is fetched successfully
+                    console.log("Guest data fetched:", guestInfo);
 
-                    document.getElementById('guest-name').textContent = guestInfo.name;
-                    document.getElementById('custom-message').textContent = guestInfo.message;
-                    document.getElementById('rsvp-section').style.display = 'block';
-
+                    // Ensure each element is defined before accessing its properties
+                    const guestNameElement = document.getElementById('guest-name');
+                    const customMessageElement = document.getElementById('custom-message');
+                    const rsvpSection = document.getElementById('rsvp-section');
                     const guestListContainer = document.getElementById('guest-list');
-                    guestListContainer.innerHTML = ''; // Clear previous content
+                    const guestListSection = document.getElementById('guest-list-section');
+                    const plusOneSection = document.getElementById('plus-one-section');
+
+                    if (guestNameElement) guestNameElement.textContent = guestInfo.name;
+                    if (customMessageElement) customMessageElement.textContent = guestInfo.message;
+                    if (rsvpSection) rsvpSection.style.display = 'block';
+
+                    if (guestListContainer) guestListContainer.innerHTML = ''; // Clear previous content
 
                     // Display individual RSVPs for each guest in the group
-                    if (guestInfo.guestNames) {
+                    if (guestInfo.guestNames && guestListContainer && guestListSection) {
                         guestInfo.guestNames.forEach((name, index) => {
                             const individualRsvpDiv = document.createElement('div');
                             individualRsvpDiv.classList.add('individual-rsvp');
@@ -144,11 +151,13 @@
 
                             guestListContainer.appendChild(individualRsvpDiv);
                         });
-                        document.getElementById('guest-list-section').style.display = 'block';
+                        guestListSection.style.display = 'block';
                     }
 
                     // Show plus one section if applicable
-                    document.getElementById('plus-one-section').style.display = guestInfo.canBringPlusOne ? 'block' : 'none';
+                    if (plusOneSection) {
+                        plusOneSection.style.display = guestInfo.canBringPlusOne ? 'block' : 'none';
+                    }
                 } else {
                     console.log('Guest document does not exist');
                     alert('Guest not found. Please enter the correct code.');
@@ -188,6 +197,7 @@
                 console.error("Error submitting RSVP:", error);
             }
         });
+        window.loadGuestInfo = loadGuestInfo;
     </script>
 
     <footer>
