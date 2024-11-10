@@ -36,7 +36,7 @@
     </section>
 
     <section class="guest-rsvp">
-        <h2>RSVP for <span id="guest-name">Guest</span><br><span class="jp-text">[ゲスト]のためのRSVP</span></h2>
+        <h2>RSVP<span id="guest-name"></span><br><span id="jpn-guest-name" class="jp-text">お返事お願いします</span></h2>
         <p id="custom-message"></p>
 
         <form id="rsvp-form">
@@ -45,7 +45,7 @@
 
             <!-- Individual Guest RSVP Section -->
             <div id="guest-list-section" style="display:none;">
-                <h3>Please confirm attendance for each guest:</h3>
+                <h3><div id="guest-list-text">Please confirm attendance for each guest:</div></h3>
                 <div id="guest-list"></div>
             </div>
 
@@ -64,7 +64,9 @@
                 </div>
             </div>
 
-            <button type="submit">Submit RSVP</button>
+            <div id="submit-section" style="display:none;">
+                <button type="submit">Submit RSVP</button>
+            </div>
         </form>
     </section>
 
@@ -104,15 +106,20 @@
 
                     // Ensure each element is defined before accessing its properties
                     const guestNameElement = document.getElementById('guest-name');
+                    const jpnNameElement = document.getElementById('jpn-guest-name')
                     const customMessageElement = document.getElementById('custom-message');
                     const rsvpSection = document.getElementById('rsvp-section');
                     const guestListContainer = document.getElementById('guest-list');
                     const guestListSection = document.getElementById('guest-list-section');
+                    const guestListText = document.getElementById('guest-list-text');
                     const plusOneSection = document.getElementById('plus-one-section');
+                    const submitSection = document.getElementById('submit-section');
 
-                    if (guestNameElement) guestNameElement.textContent = guestInfo.name;
+                    if (guestNameElement) guestNameElement.textContent = ' for ' + guestInfo.name;
+                    if (jpnNameElement) jpnNameElement.textContent = guestInfo.name + 'のお返事';
                     if (customMessageElement) customMessageElement.textContent = guestInfo.message;
                     if (rsvpSection) rsvpSection.style.display = 'block';
+                    if (guestListText && guestInfo.lang === 'jpn') guestListText.textContent = "各ゲストの出席を確認してください:";
 
                     if (guestListContainer) guestListContainer.innerHTML = ''; // Clear previous content
 
@@ -168,6 +175,9 @@
                     if (plusOneSection) {
                         plusOneSection.style.display = guestInfo.canBringPlusOne ? 'block' : 'none';
                     }
+
+                    submitSection.style.display = 'block';
+
                 } else {
                     console.log('Guest document does not exist');
                     alert('Guest not found. Please enter the correct code.');
@@ -188,24 +198,37 @@
             // Capture responses for each guest in the group
             const guestListSection = document.getElementById('guest-list-section');
             const guestDivs = guestListSection.querySelectorAll('.individual-rsvp');
+            const responseValid = 'yes';
             guestDivs.forEach((div, index) => {
                 const response = div.querySelector(`input[name="attending_${index}"]:checked`);
                 responses[div.querySelector('h4').textContent] = response ? response.value : null;
+                if (!(response)){
+                    responseValid = 'no';
+                }
             });
 
             // Capture plus one information
             if (document.getElementById('plus-one-section').style.display === 'block') {
                 const plusOneResponse = document.querySelector('input[name="plusone"]:checked').value;
                 responses["Plus One"] = plusOneResponse === "yes" ? document.getElementById('plus-one-name').value : "No Plus One";
+                if(!(plusOneResponse)){
+                    responseValid = 'no';
+                }
+            }
+            
+            if(responseValid === 'yes'){
+                // Update Firestore with responses
+                try {
+                    await updateDoc(guestDocRef, { rsvp: responses });
+                    alert('RSVP Submitted!');
+                } catch (error) {
+                    console.error("Error submitting RSVP:", error);
+                }
+            } else{
+                console.log('Invalid Response');
+                alert('Please Mark All Sections Before Submitting');
             }
 
-            // Update Firestore with responses
-            try {
-                await updateDoc(guestDocRef, { rsvp: responses });
-                alert('RSVP Submitted!');
-            } catch (error) {
-                console.error("Error submitting RSVP:", error);
-            }
         });
         window.loadGuestInfo = loadGuestInfo;
     </script>
