@@ -21,7 +21,7 @@ body {
 .jp-text-header {
     font-family: 'Yuji Boku', serif;
     font-weight: 400;
-    font-size: 5rem; /* Increase the font size slightly for better readability */
+    font-size: 8vh; /* Increase the font size slightly for better readability */
     color: #fff; /* Change to white for contrast */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Add shadow to make it stand out */
     display: block;
@@ -63,13 +63,13 @@ body {
     font-family: "Yellowtail", cursive;
     font-weight: 200;
     font-style: normal;
-    font-size: 6rem;
+    font-size: 10vh;
     color: #f8f8f8;
 }
 
 /* Date Section - Make the date more prominent */
 .hero p {
-    font-size: 4rem; /* Increase the size of the date */
+    font-size: 6vh; /* Increase the size of the date */
     font-weight: bold; /* Make the date bold */
     color: #b93f52; /* Use a more prominent color (blush pink, or try burgundy/navy) */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Add shadow to improve visibility */
