@@ -119,7 +119,8 @@
                     if (jpnNameElement) jpnNameElement.textContent = guestInfo.name + 'のお返事';
                     if (customMessageElement) customMessageElement.textContent = guestInfo.message;
                     if (rsvpSection) rsvpSection.style.display = 'block';
-                    if (guestListText && guestInfo.lang === 'jpn') guestListText.textContent = "各ゲストの出席を確認してください:";
+                    if (guestListText && guestInfo.lang === 'jpn') guestListText.textContent = "どちらかを選んでください:";
+                    if (guestListText && guestInfo.lang === 'eng') guestListText.textContent = "Please confirm attendance for each guest:";
 
                     if (guestListContainer) guestListContainer.innerHTML = ''; // Clear previous content
 
@@ -133,39 +134,68 @@
                             nameHeader.textContent = name;
                             individualRsvpDiv.appendChild(nameHeader);
 
-                            // Yes option
-                            const yesLabel = document.createElement('label');
-                            const yesRadio = document.createElement('input');
-                            yesRadio.type = 'radio';
-                            yesRadio.name = `attending_${index}`;
-                            yesRadio.value = 'yes';
-                            yesRadio.required = true;
-                            yesLabel.appendChild(yesRadio);
-                            yesLabel.appendChild(document.createTextNode(' Yes'));
+                            // Ceremony RSVP options
+                            const ceremonyLabel = document.createElement('div');
+                            ceremonyLabel.textContent = guestInfo.lang === 'jpn' ? "結婚式の出席" : "Ceremony Attendance";
+                            individualRsvpDiv.appendChild(ceremonyLabel);
 
-                            // No option
-                            const noLabel = document.createElement('label');
-                            const noRadio = document.createElement('input');
-                            noRadio.type = 'radio';
-                            noRadio.name = `attending_${index}`;
-                            noRadio.value = 'no';
-                            noRadio.required = true;
-                            noLabel.appendChild(noRadio);
-                            noLabel.appendChild(document.createTextNode(' No'));
+                            const ceremonyYesLabel = document.createElement('label');
+                            const ceremonyYesRadio = document.createElement('input');
+                            ceremonyYesRadio.type = 'radio';
+                            ceremonyYesRadio.name = `ceremony_attending_${index}`;
+                            ceremonyYesRadio.value = 'yes';
+                            ceremonyYesRadio.required = true;
+                            ceremonyYesLabel.appendChild(ceremonyYesRadio);
+                            ceremonyYesLabel.appendChild(document.createTextNode(guestInfo.lang === 'jpn' ? ' 出席 ' : ' Yes  '));
 
-                            individualRsvpDiv.appendChild(yesLabel);
-                            individualRsvpDiv.appendChild(noLabel);
+                            const ceremonyNoLabel = document.createElement('label');
+                            const ceremonyNoRadio = document.createElement('input');
+                            ceremonyNoRadio.type = 'radio';
+                            ceremonyNoRadio.name = `ceremony_attending_${index}`;
+                            ceremonyNoRadio.value = 'no';
+                            ceremonyNoRadio.required = true;
+                            ceremonyNoLabel.appendChild(ceremonyNoRadio);
+                            ceremonyNoLabel.appendChild(document.createTextNode(guestInfo.lang === 'jpn' ? ' 欠席 ' : ' No '));
 
-                            guestListContainer.appendChild(individualRsvpDiv);
-                            
+                            individualRsvpDiv.appendChild(ceremonyYesLabel);
+                            individualRsvpDiv.appendChild(ceremonyNoLabel);
+
+                            // Reception RSVP options
+                            const receptionLabel = document.createElement('div');
+                            receptionLabel.textContent = guestInfo.lang === 'jpn' ? "披露宴の出席" : "Reception Attendance";
+                            individualRsvpDiv.appendChild(receptionLabel);
+
+                            const receptionYesLabel = document.createElement('label');
+                            const receptionYesRadio = document.createElement('input');
+                            receptionYesRadio.type = 'radio';
+                            receptionYesRadio.name = `reception_attending_${index}`;
+                            receptionYesRadio.value = 'yes';
+                            receptionYesRadio.required = true;
+                            receptionYesLabel.appendChild(receptionYesRadio);
+                            receptionYesLabel.appendChild(document.createTextNode(guestInfo.lang === 'jpn' ? ' 出席 ' : ' Yes  '));
+
+                            const receptionNoLabel = document.createElement('label');
+                            const receptionNoRadio = document.createElement('input');
+                            receptionNoRadio.type = 'radio';
+                            receptionNoRadio.name = `reception_attending_${index}`;
+                            receptionNoRadio.value = 'no';
+                            receptionNoRadio.required = true;
+                            receptionNoLabel.appendChild(receptionNoRadio);
+                            receptionNoLabel.appendChild(document.createTextNode(guestInfo.lang === 'jpn' ? ' 欠席 ' : ' No '));
+
+                            individualRsvpDiv.appendChild(receptionYesLabel);
+                            individualRsvpDiv.appendChild(receptionNoLabel);
+
                             // Pre-fill RSVP if response exists
                             if (guestInfo.rsvp && guestInfo.rsvp[name]) {
-                                if (guestInfo.rsvp[name] === 'yes') {
-                                    yesRadio.checked = true;
-                                } else if (guestInfo.rsvp[name] === 'no') {
-                                    noRadio.checked = true;
-                                }
+                                if (guestInfo.rsvp[name].ceremony === 'yes') ceremonyYesRadio.checked = true;
+                                else if (guestInfo.rsvp[name].ceremony === 'no') ceremonyNoRadio.checked = true;
+
+                                if (guestInfo.rsvp[name].reception === 'yes') receptionYesRadio.checked = true;
+                                else if (guestInfo.rsvp[name].reception === 'no') receptionNoRadio.checked = true;
                             }
+
+                            guestListContainer.appendChild(individualRsvpDiv);
                         });
 
                         guestListSection.style.display = 'block';
@@ -198,37 +228,39 @@
             // Capture responses for each guest in the group
             const guestListSection = document.getElementById('guest-list-section');
             const guestDivs = guestListSection.querySelectorAll('.individual-rsvp');
-            const responseValid = 'yes';
+            let allValid = true;
+
             guestDivs.forEach((div, index) => {
-                const response = div.querySelector(`input[name="attending_${index}"]:checked`);
-                responses[div.querySelector('h4').textContent] = response ? response.value : null;
-                if (!(response)){
-                    responseValid = 'no';
+                const guestName = div.querySelector('h4').textContent;
+
+                // Ceremony response
+                const ceremonyResponse = div.querySelector(`input[name="ceremony_attending_${index}"]:checked`);
+                const receptionResponse = div.querySelector(`input[name="reception_attending_${index}"]:checked`);
+
+                // Validate that both ceremony and reception responses are selected
+                if (!ceremonyResponse || !receptionResponse) {
+                    allValid = false;
                 }
+
+                responses[guestName] = {
+                    ceremony: ceremonyResponse ? ceremonyResponse.value : null,
+                    reception: receptionResponse ? receptionResponse.value : null
+                };
             });
-
-            // Capture plus one information
-            if (document.getElementById('plus-one-section').style.display === 'block') {
-                const plusOneResponse = document.querySelector('input[name="plusone"]:checked').value;
-                responses["Plus One"] = plusOneResponse === "yes" ? document.getElementById('plus-one-name').value : "No Plus One";
-                if(!(plusOneResponse)){
-                    responseValid = 'no';
-                }
-            }
             
-            if(responseValid === 'yes'){
-                // Update Firestore with responses
-                try {
-                    await updateDoc(guestDocRef, { rsvp: responses });
-                    alert('RSVP Submitted!');
-                } catch (error) {
-                    console.error("Error submitting RSVP:", error);
-                }
-            } else{
-                console.log('Invalid Response');
-                alert('Please Mark All Sections Before Submitting');
+            // Check if all required responses are valid
+            if (!allValid || Object.keys(responses).length === 0) {
+                alert("Error submitting RSVP");
+                return;
             }
 
+            // Update Firestore with responses
+            try {
+                await updateDoc(guestDocRef, { rsvp: responses });
+                alert('RSVP Submitted!');
+            } catch (error) {
+                console.error("Error submitting RSVP:", error);
+            }
         });
         window.loadGuestInfo = loadGuestInfo;
     </script>
