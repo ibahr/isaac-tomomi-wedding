@@ -77,6 +77,12 @@ body {
     margin-bottom: 10px;
 }
 
+@media only screen and (max-width 767px){
+    .hero p {
+        font-size: 2px;
+    }
+}
+
 /* About Section */
 .about, .details, .guest-rsvp {
     padding: 40px 20px;
