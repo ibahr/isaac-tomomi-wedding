@@ -175,8 +175,13 @@
                         [18:30~] Wedding Reception `;
                     } 
                     if (rsvpSection) rsvpSection.style.display = 'block';
-                    if (guestListText && guestInfo.lang === 'jpn') guestListText.textContent = "どちらかを選んでください:";
-                    if (guestListText && guestInfo.lang === 'eng') guestListText.textContent = "Please confirm attendance for each guest:";
+                    if (guestListText){
+                        guestListText.setAttribute('style', 'white-space: pre-line;');
+                        guestListText.textContent = guestInfo.lang === 'jpn' ?
+                        `ご返信：どちらかをお選びいただき:`
+                        :
+                        `Please confirm attendance for each guest:`;
+                    }
 
                     if (guestListContainer) guestListContainer.innerHTML = ''; // Clear previous content
 

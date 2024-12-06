@@ -12,7 +12,7 @@ body {
 .jp-text {
     font-family: 'Zen Kurenaido', sans-serif;
     font-weight: 400;
-    font-size: 1.3rem; /* Increase the font size slightly for better readability */
+    font-size: 0.56vw; /* Increase the font size slightly for better readability */
     color: #212020; /* Change to white for contrast */
     text-shadow: 2px 2px 4px #fff; /* Add shadow to make it stand out */
     display: block;
@@ -134,7 +134,7 @@ body {
     font-family: "Zen Kurenaido", sans-serif;
     font-weight: 200;
     font-style: normal;
-    font-size: 1.4rem; /* Increase the font size slightly for better readability */
+    font-size: 0.6vw; /* Increase the font size slightly for better readability */
     color: #212020; /* Change to white for contrast */
     text-shadow: 2px 2px 4px #fff; /* Add shadow to make it stand out */
     display: block;
