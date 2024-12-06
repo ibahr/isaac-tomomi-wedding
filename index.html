@@ -139,7 +139,7 @@
                     const plusOneSection = document.getElementById('plus-one-section');
                     const submitSection = document.getElementById('submit-section');
 
-                    if (guestNameElement) guestNameElement.textContent = guestInfo.name + "'s Personalized Wedding Details" ;
+                    if (guestNameElement) guestNameElement.textContent = guestInfo.lang === 'jpn' ? guestInfo.name + "の特別な結婚式の詳細": guestInfo.name + "'s Personalized Wedding Details" ;
                     if (jpnNameElement) jpnNameElement.textContent = guestInfo.name + 'のお返事';
                     if (weddingDetailsElement){
                         weddingDetailsElement.setAttribute('style', 'white-space: pre-line;');
