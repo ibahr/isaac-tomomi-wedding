@@ -1,20 +1,32 @@
 /* General Styles */
 body {
     margin: 0;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-weight: 400;
+    font-size: 1.5rem; /* Increase the font size slightly for better readability */
     background-color: #F2BFA4;
-    color: #333;
+    color: #212020; /* Change to white for contrast */
 }
 
 /* Japanese Text */
 .jp-text {
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: 'Zen Kurenaido', sans-serif;
     font-weight: 400;
-    font-size: 1rem; /* Increase the font size slightly for better readability */
-    color: #fff; /* Change to white for contrast */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Add shadow to make it stand out */
+    font-size: 1.3rem; /* Increase the font size slightly for better readability */
+    color: #212020; /* Change to white for contrast */
+    text-shadow: 2px 2px 4px #fff; /* Add shadow to make it stand out */
     display: block;
     margin-top: 5px;
+}
+
+.jp-text-subheader {
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-weight: 400;
+    font-size: 2.0rem; /* Increase the font size slightly for better readability */
+    color: #212020; /* Change to white for contrast */
+    text-shadow: 2px 2px 4px #fff; /* Add shadow to make it stand out */
+    display: block;
+    margin-top: 5px;  
 }
 
 /* Japanese Text Header*/
@@ -23,10 +35,12 @@ body {
     font-weight: 400;
     font-size: 8vh; /* Increase the font size slightly for better readability */
     color: #fff; /* Change to white for contrast */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Add shadow to make it stand out */
+    text-shadow: 2px 2px 4px #000000; /* Add shadow to make it stand out */
     display: block;
     margin-top: 5px;
 }
+
+
 
 /* Hero Section */
 .hero {
@@ -65,6 +79,7 @@ body {
     font-style: normal;
     font-size: 10vh;
     color: #f8f8f8;
+    text-shadow: 2px 2px 4px #000000; /* Add shadow to make it stand out */
 }
 
 /* Date Section - Make the date more prominent */
@@ -105,8 +120,24 @@ body {
 .about p {
     font-size: 1.2rem;
     color: #333;
-    max-width: 600px;
+    max-width: 400px;
     margin: 0 auto;
+}
+
+.about-us-content {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+.about-us-content p {
+    font-family: "Zen Kurenaido", sans-serif;
+    font-weight: 200;
+    font-style: normal;
+    font-size: 1.4rem; /* Increase the font size slightly for better readability */
+    color: #212020; /* Change to white for contrast */
+    text-shadow: 2px 2px 4px #fff; /* Add shadow to make it stand out */
+    display: block;
 }
 
 /* Details Section */
@@ -182,6 +213,13 @@ footer {
 #guest-list li {
     font-size: 1.1rem;
     margin-bottom: 5px;
+}
+
+.guest-rsvp p {
+    font-size: 1.2rem;
+    color: #333;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 #plus-one-name-section {

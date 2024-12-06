@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wedding of Isaac & Tomomi</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Yellowtail&family=Noto+Sans+JP&family=Rampart+One&family=Yusei+Magic&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Yellowtail&family=Noto+Sans+JP&family=Rampart+One&family=Yusei+Magic&family=Zen+Kurenaido&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="hero">
@@ -21,31 +21,50 @@
     </section>
 
     <section class="about">
-        <h2>About Us<br><span class="jp-text">私たちについて</span></h2>
-        <p>We can't wait to celebrate our special day with you! Join us for an unforgettable event at Atsuta Jingu and Hilton Nagoya.<br><span class="jp-text">私たちはこの特別な日を皆さんと一緒に祝えるのを楽しみにしています！熱田神宮とヒルトン名古屋での忘れられないイベントに参加してください。</span></p>
+        <h2>About Us<br><span class="jp-text-subheader">私たちについて</span></h2>
+        <div class="about-us-content">
+            <div>
+                <p>Our story began in 2016 at Y Market Brewing in Nagoya, where we met during my business trip to Japan. That chance meeting left a lasting impression, and I found myself drawn back to Japan—and to Tomomi—time and time again.
+
+                    <br><br>In 2019, Tomomi embarked on a working holiday in Vancouver, while I was living a short drive away in Seattle. Despite being in different cities, we made the most of our time together, exploring a shared life on the West Coast. Those months confirmed what I already knew: I wanted to be together no matter where life took us.
+                    
+                    <br><br>In September 2023, I proposed, and Tomomi said yes! Now, we’re thrilled to celebrate our love with family and friends as we begin our journey as husband and wife.</p>
+            </div>
+            <div>
+                <p><span class="jp-text">私たちの物語は2016年、名古屋のYマーケットブルーイングで始まりました。そのとき、アイザックが日本へ出張中に偶然出会いました。この出会いは私たちに強い印象を残し、アイザックは何度も日本、そして私のもとへ戻ってきてくれました。
+
+                    <br><br>2019年には、私はバンクーバーでワーキングホリデーを始め、アイザックは近くのシアトルで暮らしていました。別々の街に住んでいたにもかかわらず、私たちはお互いに会う時間を大切にし、北米西海岸での生活を一緒に楽しみました。この数ヶ月間で、私たちは確信しました。「どこにいても一緒にいたい」と。
+                    
+                    <br><br>そして2023年9月、アイザックがプロポーズしてくれ、私は「はい」と答えました！家族や友人と一緒にこの愛を祝えることを、とても楽しみにしています。これから夫婦として新しい旅を始めます！</span></p>
+            </div>
+        </div>
+        
     </section>
 
     <section class="details">
-        <h2>Wedding Details<br><span class="jp-text">結婚式の詳細</span></h2>
+        <h2>Wedding Details<br><span class="jp-text-subheader">結婚式の詳細</span></h2>
         <div class="details-content">
             <div class="detail">
-                <h3>Ceremony<br><span class="jp-text">結婚式</span></h3>
+                <h3>Ceremony<br><span class="jp-text-subheader">結婚式</span></h3>
                 <p>Atsuta Jingu, Nagoya<br><span class="jp-text">熱田神宮、名古屋</span></p>
             </div>
             <div class="detail">
-                <h3>Reception<br><span class="jp-text">披露宴</span></h3>
-                <p>Hilton Nagoya, 105 Ballroom<br><span class="jp-text">ヒルトン名古屋、105 ボールルーム</span></p>
+                <h3>Reception<br><span class="jp-text-subheader">披露宴</span></h3>
+                <p>Hilton Nagoya, 105 Ballroom<br><span class="jp-text">ヒルトン名古屋<br>105 ボールルーム</span></p>
             </div>
         </div>
     </section>
 
     <section class="guest-rsvp">
-        <h2>RSVP<span id="guest-name"></span><br><span id="jpn-guest-name" class="jp-text">お返事お待ちしております！</span></h2>
-        <p id="custom-message"></p>
+        <h2><span id="guest-name">Enter Your Guest Code for More Details<br><span class="jp-text-subheader">お返事お待ちしております！</span></span></h2>
+
 
         <form id="rsvp-form">
             <input type="text" id="guest" placeholder="Enter your code ・ コードを入力" required>
             <button type="button" onclick="loadGuestInfo()">Load Guest Info</button>
+
+            <p id="wedding-details"></p>
+            <p id="custom-message"></p>
 
             <!-- Individual Guest RSVP Section -->
             <div id="guest-list-section" style="display:none;">
@@ -111,6 +130,7 @@
                     // Ensure each element is defined before accessing its properties
                     const guestNameElement = document.getElementById('guest-name');
                     const jpnNameElement = document.getElementById('jpn-guest-name')
+                    const weddingDetailsElement = document.getElementById('wedding-details');
                     const customMessageElement = document.getElementById('custom-message');
                     const rsvpSection = document.getElementById('rsvp-section');
                     const guestListContainer = document.getElementById('guest-list');
@@ -119,9 +139,41 @@
                     const plusOneSection = document.getElementById('plus-one-section');
                     const submitSection = document.getElementById('submit-section');
 
-                    if (guestNameElement) guestNameElement.textContent = ' for ' + guestInfo.name;
+                    if (guestNameElement) guestNameElement.textContent = guestInfo.name + "'s Personalized Wedding Details" ;
                     if (jpnNameElement) jpnNameElement.textContent = guestInfo.name + 'のお返事';
-                    if (customMessageElement) customMessageElement.textContent = guestInfo.message;
+                    if (weddingDetailsElement){
+                        weddingDetailsElement.setAttribute('style', 'white-space: pre-line;');
+                        weddingDetailsElement.textContent = guestInfo.lang === 'jpn' ? 
+                        `私たちの結婚式では、日本と西洋の伝統を美しく融合させます。
+
+                        まず、歴史ある熱田神宮での伝統的な神前式から始まります。この厳粛で神聖な儀式は、日本の豊かな文化遺産を反映しており、特にともみのルーツを大切にするために意味深いものです。
+
+                        式の後は、ヒルトン名古屋のエレガントな「105ボールルーム」で西洋式の披露宴を行います。このパーティーでは、美味しい料理、心温まるスピーチ、ダンス、そして家族や友人と共有する楽しいひとときをお楽しみいただけます。
+
+                        私たちにとって忘れられないこの特別な一日を、二つの文化を融合させながら皆さまと共有できることを心から楽しみにしています。
+
+                        アジェンダ
+                        [15:00-15:30] 熱田神宮会館にてゲスト受付
+                        [16:00-16:30] 本殿近くでの行列・挙式
+                        [17:30-18:30] ヒルトン名古屋にてカクテルタイム
+                        [18:30~] 披露宴開始` 
+
+                        : 
+
+                        `Our wedding will beautifully blend Japanese and Western traditions.
+
+                        The day begins with a traditional Shinto wedding ceremony at the historic Atsuta Jingu, one of Japan's most revered shrines. This intimate and sacred ceremony reflects Japan's rich cultural heritage and is a meaningful way for us to honor Tomomi's roots.
+
+                        Following the ceremony, we will transition to a Western-style wedding reception at the elegant Hilton Nagoya in their 105 ballroom. This celebration will include delicious food, heartfelt speeches, dancing, and joyful moments shared with family and friends.
+
+                        We can't wait to share this unforgettable day with you, combining the best of two cultures as we begin our journey together as husband and wife.
+
+                        Agenda:
+                        [15:00-15:30] Guests arrive at Atsuta Jingu Kaikan
+                        [16:00-16:30] Procession and Ceremony next to the Main Shrine
+                        [17:30-18:30] Cocktail Hour at Hilton 105 Reception Area
+                        [18:30~] Wedding Reception `;
+                    } 
                     if (rsvpSection) rsvpSection.style.display = 'block';
                     if (guestListText && guestInfo.lang === 'jpn') guestListText.textContent = "どちらかを選んでください:";
                     if (guestListText && guestInfo.lang === 'eng') guestListText.textContent = "Please confirm attendance for each guest:";
