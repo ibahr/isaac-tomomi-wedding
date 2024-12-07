@@ -65,6 +65,7 @@
 
             <p id="wedding-details"></p>
             <p id="custom-message"></p>
+            <div id="travel-link" style="display:none;"><a href="/travel-en.html" target="_blank">Click Here for Travel Recommendations</a></div>
 
             <!-- Individual Guest RSVP Section -->
             <div id="guest-list-section" style="display:none;">
@@ -132,6 +133,7 @@
                     const jpnNameElement = document.getElementById('jpn-guest-name')
                     const weddingDetailsElement = document.getElementById('wedding-details');
                     const customMessageElement = document.getElementById('custom-message');
+                    const travelLink = document.getElementById('travel-link');
                     const rsvpSection = document.getElementById('rsvp-section');
                     const guestListContainer = document.getElementById('guest-list');
                     const guestListSection = document.getElementById('guest-list-section');
@@ -174,6 +176,7 @@
                         [17:30-18:30] Cocktail Hour at Hilton 105 Reception Area
                         [18:30~] Wedding Reception `;
                     } 
+                    if (guestInfo.isTraveling) travelLink.style.display = 'block';
                     if (rsvpSection) rsvpSection.style.display = 'block';
                     if (guestListText){
                         guestListText.setAttribute('style', 'white-space: pre-line;');
