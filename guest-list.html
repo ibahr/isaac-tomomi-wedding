@@ -152,9 +152,11 @@
                                 const rsvpContainer = document.createElement('div');
                                 
                                 if (name === "Plus One" && typeof response === "object") {
+                                    const rsvpLine = document.createElement('div'); // Create the rsvpLine element
                                     const plusOneName = response.name ? response.name : "No Plus One";
                                     const plusOneAttending = response.attending === "yes" ? "Attending" : "Not Attending";
                                     rsvpLine.textContent = `Plus One: ${plusOneName} (${plusOneAttending})`;
+                                    rsvpContainer.appendChild(rsvpLine); // Append rsvpLine to rsvpContainer
                                 }
                                 else {
                                     // Add each guest's responses for ceremony and reception
