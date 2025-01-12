@@ -285,6 +285,20 @@
                     // Show plus one section if applicable
                     if (guestInfo.canBringPlusOne) {
                         document.getElementById('plus-one-section').style.display = 'block';
+
+                        if (guestInfo.rsvp && guestInfo.rsvp["Plus One"]) {
+                            const plusOneResponse = guestInfo.rsvp["Plus One"];
+
+                            // Pre-fill the "Yes" or "No" radio button
+                            const plusOneRadio = document.querySelector(`input[name="plusone"][value="${plusOneResponse.attending}"]`);
+                            if (plusOneRadio) plusOneRadio.checked = true;
+
+                            // If "Yes" was selected, pre-fill the name field
+                            if (plusOneResponse.attending === "yes" && plusOneResponse.name) {
+                                document.getElementById('plus-one-name-section').style.display = 'block';
+                                document.getElementById('plus-one-name').value = plusOneResponse.name;
+                            }
+                        }
                         setupPlusOneListener(); // Initialize the event listeners for Plus One
                     }
 
