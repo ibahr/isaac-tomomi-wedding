@@ -113,6 +113,23 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        function setupPlusOneListener() {
+            const plusOneRadios = document.querySelectorAll('input[name="plusone"]');
+            const plusOneNameSection = document.getElementById('plus-one-name-section');
+
+            plusOneRadios.forEach((radio) => {
+                radio.addEventListener('change', (event) => {
+                    if (event.target.value === 'yes') {
+                        plusOneNameSection.style.display = 'block';
+                    } else {
+                        plusOneNameSection.style.display = 'none';
+                        document.getElementById('plus-one-name').value = ''; // Clear input if "No" is selected
+                    }
+                });
+            });
+        }
+
+
         //load guest info function
         async function loadGuestInfo() {
             console.log("Load Guest Info button clicked");
@@ -162,11 +179,11 @@
 
                         : 
 
-                        `Our wedding will beautifully blend Japanese and Western traditions.
+                        `Our wedding will be a great mix of Japanese and Western traditions.
 
                         The afternoon will begin with a traditional Shinto wedding ceremony at the historic Atsuta Jingu, one of Japan's most important shrines. This intimate and sacred ceremony reflects Japan's rich cultural heritage and is a meaningful way for us to honor Tomomi's roots.
 
-                        Following the ceremony, we will transition to a Western-style wedding reception at the Hilton Nagoya in their 105 ballroom. This celebration will include great food, heartfelt speeches, dancing, and joyful moments shared with family and friends.
+                        Following the ceremony, we will move to a Western-style wedding reception at the Hilton Nagoya in their 105 ballroom. This celebration will include great food, toasts, dancing, and joyful moments shared with family and friends.
 
                         We can't wait to share this unforgettable day with you, combining the best of two cultures as we begin our journey together as husband and wife.
 
@@ -266,8 +283,9 @@
                     }
 
                     // Show plus one section if applicable
-                    if (plusOneSection) {
-                        plusOneSection.style.display = guestInfo.canBringPlusOne ? 'block' : 'none';
+                    if (guestInfo.canBringPlusOne) {
+                        document.getElementById('plus-one-section').style.display = 'block';
+                        setupPlusOneListener(); // Initialize the event listeners for Plus One
                     }
 
                     submitSection.style.display = 'block';
@@ -304,6 +322,7 @@
                 // Validate that both ceremony and reception responses are selected
                 if (!ceremonyResponse || !receptionResponse) {
                     allValid = false;
+                    alert('Please complete the RSVP for ${guestName}');
                 }
 
                 responses[guestName] = {
@@ -311,19 +330,42 @@
                     reception: receptionResponse ? receptionResponse.value : null
                 };
             });
+
+            // Capture the "Plus One" response
+            const plusOneSection = document.getElementById('plus-one-section');
+            if (plusOneSection.style.display === 'block') {
+                const plusOneResponse = document.querySelector('input[name="plusone"]:checked');
+                if (plusOneResponse) {
+                    if (plusOneResponse.value === "yes") {
+                        const plusOneName = document.getElementById('plus-one-name').value;
+                        if (plusOneName.trim()) {
+                            responses["Plus One"] = { name: plusOneName, attending: "yes" };
+                        } else {
+                            allValid = false; // Plus One name is required if "Yes" is selected
+                            alert("Please provide the name of your Plus One.");
+                        }
+                    } else {
+                        responses["Plus One"] = { name: "No Plus One", attending: "no" };
+                    }
+                } else {
+                    allValid = false; // Ensure Plus One response is selected
+                    alert("Please confirm if you're bringing a Plus One.");
+                }
+            }
             
             // Check if all required responses are valid
             if (!allValid || Object.keys(responses).length === 0) {
-                alert("Error submitting RSVP");
+                alert("Please complete all RSVP sections before submitting.");
                 return;
             }
 
             // Update Firestore with responses
             try {
                 await updateDoc(guestDocRef, { rsvp: responses });
-                alert('RSVP Submitted!');
+                alert('RSVP Submitted! Thank you!');
             } catch (error) {
                 console.error("Error submitting RSVP:", error);
+                alert("An error occurred while submitting your RSVP. Please try again.");
             }
         });
         window.loadGuestInfo = loadGuestInfo;

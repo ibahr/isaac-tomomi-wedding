@@ -151,10 +151,12 @@
                             for (const [name, response] of Object.entries(guestData.rsvp)) {
                                 const rsvpContainer = document.createElement('div');
                                 
-                                if (name === "Plus One") {
-                                    // Add "Plus One" info separately
-                                    rsvpContainer.textContent = `Plus One: ${response}`;
-                                } else {
+                                if (name === "Plus One" && typeof response === "object") {
+                                    const plusOneName = response.name || "No Plus One";
+                                    const plusOneAttending = response.attending || "no";
+                                    rsvpLine.textContent = `Plus One: ${plusOneName} (${plusOneAttending === "yes" ? "Attending" : "Not Attending"})`;
+                                }
+                                else {
                                     // Add each guest's responses for ceremony and reception
                                     const guestRsvpHeader = document.createElement('div');
                                     guestRsvpHeader.textContent = `${name}'s RSVP:`;
