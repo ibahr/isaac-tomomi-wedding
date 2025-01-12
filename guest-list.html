@@ -1,24 +1,24 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin - Manage Guest List</title>
-        <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manage Guest List</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
-        <!-- Password Protection Section -->
-        <section id="password-section">
-            <h2>Admin Access</h2>
-            <input type="password" id="admin-password" placeholder="Enter admin password" required>
-            <button onclick="checkPassword()">Enter</button>
-            <p id="password-error" style="color: red; display: none;">Incorrect password, please try again.</p>
-        </section>
+    <!-- Password Protection Section -->
+    <section id="password-section">
+        <h2>Admin Access</h2>
+        <input type="password" id="admin-password" placeholder="Enter admin password" required>
+        <button onclick="checkPassword()">Enter</button>
+        <p id="password-error" style="color: red; display: none;">Incorrect password, please try again.</p>
+    </section>
 
-        <!-- Admin Page Content (Hidden initially) -->
-        <section id="admin-content" style="display: none;">
-            <h2>Manage Guest List</h2>
+    <!-- Admin Page Content (Hidden initially) -->
+    <section id="admin-content" style="display: none;">
+        <h2>Manage Guest List</h2>
 
         <!-- Form to Add New Guest -->
         <div id="add-guest">
@@ -47,157 +47,207 @@
                 <button type="submit">Add Guest</button>
             </form>
         </div>
+        <div id="guest-totals"></div>
 
-            <!-- Section to Display All Guests -->
-            <div id="guest-list">
-                <h3>Guest List</h3>
-                <ul id="guest-list-items"></ul>
-            </div>
-        </section>
+        <!-- Section to Display All Guests -->
+        <div id="guest-list">
+            <h3>Guest List</h3>
+            <ul id="guest-list-items"></ul>
+        </div>
+    </section>
 
-        <!-- Firebase and JavaScript for Admin Functions -->
-        <script type="module">
-            // Import Firebase functions
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-            import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    <!-- Firebase and JavaScript for Admin Functions -->
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-            // Firebase configuration
-            const firebaseConfig = {
-                apiKey: "AIzaSyBQ3giOhEChsj8oziRaTGeITm7bT8bxfno",
-                authDomain: "wedding-2193a.firebaseapp.com",
-                projectId: "wedding-2193a",
-                storageBucket: "wedding-2193a.appspot.com",
-                messagingSenderId: "856129939537",
-                appId: "1:856129939537:web:0c7f5a0ee410197ab67070"
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQ3giOhEChsj8oziRaTGeITm7bT8bxfno",
+            authDomain: "wedding-2193a.firebaseapp.com",
+            projectId: "wedding-2193a",
+            storageBucket: "wedding-2193a.appspot.com",
+            messagingSenderId: "856129939537",
+            appId: "1:856129939537:web:0c7f5a0ee410197ab67070"
+        };
+
+        // Initialize Firebase and Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Password protection
+        const ADMIN_PASSWORD = "ymarket"; // Replace with a strong password
+
+        // Define the checkPassword function and attach it to the window object
+        function checkPassword() {
+            const passwordInput = document.getElementById('admin-password').value;
+            if (passwordInput === ADMIN_PASSWORD) {
+                document.getElementById('password-section').style.display = 'none';
+                document.getElementById('admin-content').style.display = 'block';
+            } else {
+                document.getElementById('password-error').style.display = 'block';
+            }
+        }
+        window.checkPassword = checkPassword; // Make it globally accessible
+        import { setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        // Function to add a new guest
+        async function addGuest(event) {
+            event.preventDefault();
+
+            const guestCode = document.getElementById('guest-code').value.toLowerCase();
+            const guestName = document.getElementById('guest-name').value;
+            const guestNames = document.getElementById('guest-names').value.split(',').map(name => name.trim());
+            const canBringPlusOne = document.getElementById('plus-one-option').checked;
+            const customMessage = document.getElementById('custom-message').value;
+            const language = document.getElementById('language').value; // Capture selected language
+            const isTraveling = document.getElementById('is-traveling').checked;
+
+            // Prepare guest data
+            const guestData = {
+                name: guestName,
+                guestNames: guestNames.length > 0 ? guestNames : null,
+                canBringPlusOne: canBringPlusOne,
+                message: customMessage,
+                lang: language, // Add language to guest data
+                isTraveling: isTraveling
             };
 
-            // Initialize Firebase and Firestore
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-
-            // Password protection
-            const ADMIN_PASSWORD = "ymarket"; // Replace with a strong password
-
-            // Define the checkPassword function and attach it to the window object
-            function checkPassword() {
-                const passwordInput = document.getElementById('admin-password').value;
-                if (passwordInput === ADMIN_PASSWORD) {
-                    document.getElementById('password-section').style.display = 'none';
-                    document.getElementById('admin-content').style.display = 'block';
-                } else {
-                    document.getElementById('password-error').style.display = 'block';
-                }
+            try {
+                // Use setDoc to specify the document ID as the guest code
+                await setDoc(doc(db, "guests", guestCode), guestData);
+                alert("Guest added successfully!");
+                document.getElementById('add-guest-form').reset();
+                loadGuestList(); // Refresh the guest list
+            } catch (error) {
+                console.error("Error adding guest:", error);
+                alert("Failed to add guest. Please try again.");
             }
-            window.checkPassword = checkPassword; // Make it globally accessible
-            import { setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-            // Function to add a new guest
-            async function addGuest(event) {
-                event.preventDefault();
+        }
 
-                const guestCode = document.getElementById('guest-code').value.toLowerCase();
-                const guestName = document.getElementById('guest-name').value;
-                const guestNames = document.getElementById('guest-names').value.split(',').map(name => name.trim());
-                const canBringPlusOne = document.getElementById('plus-one-option').checked;
-                const customMessage = document.getElementById('custom-message').value;
-                const language = document.getElementById('language').value; // Capture selected language
-                const isTraveling = document.getElementById('is-traveling').checked;
+        // Function to calculate total guests for ceremony and reception
+        async function calculateGuestTotals() {
+            const ceremonyTotal = { yes: 0, no: 0 };
+            const receptionTotal = { yes: 0, no: 0 };
 
-                // Prepare guest data
-                const guestData = {
-                    name: guestName,
-                    guestNames: guestNames.length > 0 ? guestNames : null,
-                    canBringPlusOne: canBringPlusOne,
-                    message: customMessage,
-                    lang: language, // Add language to guest data
-                    isTraveling: isTraveling
-                };
+            try {
+                const querySnapshot = await getDocs(collection(db, "guests"));
 
-                try {
-                    // Use setDoc to specify the document ID as the guest code
-                    await setDoc(doc(db, "guests", guestCode), guestData);
-                    alert("Guest added successfully!");
-                    document.getElementById('add-guest-form').reset();
-                    loadGuestList(); // Refresh the guest list
-                } catch (error) {
-                    console.error("Error adding guest:", error);
-                    alert("Failed to add guest. Please try again.");
-                }
-            }
+                querySnapshot.forEach((doc) => {
+                    const guestData = doc.data();
 
-            // Function to load all guests with RSVP status
-            async function loadGuestList() {
-                const guestListContainer = document.getElementById('guest-list-items');
-                guestListContainer.innerHTML = ''; // Clear previous content
+                    if (guestData.rsvp) {
+                        Object.entries(guestData.rsvp).forEach(([name, response]) => {
+                            if (name !== "Plus One") {
+                                // Count ceremony responses
+                                if (response.ceremony === "yes") ceremonyTotal.yes++;
+                                if (response.ceremony === "no") ceremonyTotal.no++;
 
-                try {
-                    const querySnapshot = await getDocs(collection(db, "guests"));
-                    querySnapshot.forEach((doc) => {
-                        const guestData = doc.data();
-                        const guestItem = document.createElement('li');
-                        
-                        // Create a container for each guest's info
-                        const guestInfoContainer = document.createElement('div');
-                        
-                        // Basic guest information
-                        const guestInfoHeader = document.createElement('div');
-                        guestInfoHeader.textContent = `${guestData.name}:`;
-                        guestInfoContainer.appendChild(guestInfoHeader);
-                        const guestInfoCode = document.createElement('div');
-                        guestInfoCode.textContent = `Group Code: ${doc.id}`;
-                        guestInfoContainer.appendChild(guestInfoCode);
-
-                        // Check if there are RSVP responses for ceremony and reception
-                        if (guestData.rsvp) {
-                            for (const [name, response] of Object.entries(guestData.rsvp)) {
-                                const rsvpContainer = document.createElement('div');
-                                
-                                if (name === "Plus One" && typeof response === "object") {
-                                    const rsvpLine = document.createElement('div'); // Create the rsvpLine element
-                                    const plusOneName = response.name ? response.name : "No Plus One";
-                                    const plusOneAttending = response.attending === "yes" ? "Attending" : "Not Attending";
-                                    rsvpLine.textContent = `Plus One: ${plusOneName} (${plusOneAttending})`;
-                                    rsvpContainer.appendChild(rsvpLine); // Append rsvpLine to rsvpContainer
+                                // Count reception responses
+                                if (response.reception === "yes") receptionTotal.yes++;
+                                if (response.reception === "no") receptionTotal.no++;
+                            } else {
+                                // Handle Plus One if applicable
+                                if (response.attending === "yes") {
+                                    ceremonyTotal.yes++;
+                                    receptionTotal.yes++;
                                 }
-                                else {
-                                    // Add each guest's responses for ceremony and reception
-                                    const guestRsvpHeader = document.createElement('div');
-                                    guestRsvpHeader.textContent = `${name}'s RSVP:`;
-                                    rsvpContainer.appendChild(guestRsvpHeader);
-
-                                    const ceremonyResponse = response.ceremony || "No response";
-                                    const receptionResponse = response.reception || "No response";
-
-                                    const ceremonyDiv = document.createElement('div');
-                                    ceremonyDiv.textContent = `Ceremony: ${ceremonyResponse}`;
-                                    rsvpContainer.appendChild(ceremonyDiv);
-
-                                    const receptionDiv = document.createElement('div');
-                                    receptionDiv.textContent = `Reception: ${receptionResponse}`;
-                                    rsvpContainer.appendChild(receptionDiv);
-                                }
-                                guestInfoContainer.appendChild(rsvpContainer);
                             }
-                        } else {
-                            const noRsvpLine = document.createElement('div');
-                            noRsvpLine.textContent = "No RSVP submitted";
-                            guestInfoContainer.appendChild(noRsvpLine);
-                        }
+                        });
+                    }
+                });
 
-                        // Add the guest info container to the list item and then to the list
-                        guestItem.appendChild(guestInfoContainer);
-                        guestListContainer.appendChild(guestItem);
-                    });
-                } catch (error) {
-                    console.error("Error loading guest list:", error);
-                    alert("Failed to load guest list. Please try again.");
-                }
+                // Display totals on the admin page
+                const totalsSection = document.getElementById("guest-totals");
+                totalsSection.innerHTML = `
+                    <h3>Guest Totals</h3>
+                    <p><strong>Ceremony:</strong> ${ceremonyTotal.yes} Attending, ${ceremonyTotal.no} Not Attending</p>
+                    <p><strong>Reception:</strong> ${receptionTotal.yes} Attending, ${receptionTotal.no} Not Attending</p>
+                `;
+            } catch (error) {
+                console.error("Error calculating guest totals:", error);
+                alert("Failed to calculate guest totals. Please try again.");
             }
+        }
 
-            // Attach the loadGuestList function to window.onload
-            window.onload = loadGuestList;
+        // Function to load all guests with RSVP status
+        async function loadGuestList() {
+            const guestListContainer = document.getElementById('guest-list-items');
+            guestListContainer.innerHTML = ''; // Clear previous content
 
-            // Event listener for the Add Guest form
-            document.getElementById('add-guest-form').addEventListener('submit', addGuest);
-        </script>
-    </body>
-    </html>
+            try {
+                const querySnapshot = await getDocs(collection(db, "guests"));
+                querySnapshot.forEach((doc) => {
+                    const guestData = doc.data();
+                    const guestItem = document.createElement('li');
+                    
+                    // Create a container for each guest's info
+                    const guestInfoContainer = document.createElement('div');
+                    
+                    // Basic guest information
+                    const guestInfoHeader = document.createElement('div');
+                    guestInfoHeader.textContent = `${guestData.name}:`;
+                    guestInfoContainer.appendChild(guestInfoHeader);
+                    const guestInfoCode = document.createElement('div');
+                    guestInfoCode.textContent = `Group Code: ${doc.id}`;
+                    guestInfoContainer.appendChild(guestInfoCode);
+
+                    // Check if there are RSVP responses for ceremony and reception
+                    if (guestData.rsvp) {
+                        for (const [name, response] of Object.entries(guestData.rsvp)) {
+                            const rsvpContainer = document.createElement('div');
+                            
+                            if (name === "Plus One" && typeof response === "object") {
+                                const rsvpLine = document.createElement('div'); // Create the rsvpLine element
+                                const plusOneName = response.name ? response.name : "No Plus One";
+                                const plusOneAttending = response.attending === "yes" ? "Attending" : "Not Attending";
+                                rsvpLine.textContent = `Plus One: ${plusOneName} (${plusOneAttending})`;
+                                rsvpContainer.appendChild(rsvpLine); // Append rsvpLine to rsvpContainer
+                            }
+                            else {
+                                // Add each guest's responses for ceremony and reception
+                                const guestRsvpHeader = document.createElement('div');
+                                guestRsvpHeader.textContent = `${name}'s RSVP:`;
+                                rsvpContainer.appendChild(guestRsvpHeader);
+
+                                const ceremonyResponse = response.ceremony || "No response";
+                                const receptionResponse = response.reception || "No response";
+
+                                const ceremonyDiv = document.createElement('div');
+                                ceremonyDiv.textContent = `Ceremony: ${ceremonyResponse}`;
+                                rsvpContainer.appendChild(ceremonyDiv);
+
+                                const receptionDiv = document.createElement('div');
+                                receptionDiv.textContent = `Reception: ${receptionResponse}`;
+                                rsvpContainer.appendChild(receptionDiv);
+                            }
+                            guestInfoContainer.appendChild(rsvpContainer);
+                        }
+                    } else {
+                        const noRsvpLine = document.createElement('div');
+                        noRsvpLine.textContent = "No RSVP submitted";
+                        guestInfoContainer.appendChild(noRsvpLine);
+                    }
+
+                    // Add the guest info container to the list item and then to the list
+                    guestItem.appendChild(guestInfoContainer);
+                    guestListContainer.appendChild(guestItem);
+                });
+
+                // Calculate totals after loading guests
+                calculateGuestTotals();
+
+            } catch (error) {
+                console.error("Error loading guest list:", error);
+                alert("Failed to load guest list. Please try again.");
+            }
+        }
+
+        // Attach the loadGuestList function to window.onload
+        window.onload = loadGuestList;
+
+        // Event listener for the Add Guest form
+        document.getElementById('add-guest-form').addEventListener('submit', addGuest);
+    </script>
+</body>
+</html>
